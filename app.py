@@ -59,7 +59,7 @@ buried_height = 1
 
 # Calculation and display
 if st.button('Calculate'):
-    adjusted_height = math.ceil((height - buried_height) / block_height) + 1
+    adjusted_height = math.ceil(height / block_height)
     full_blocks = math.ceil(length / block_length)
     rows = int(adjusted_height)
     total_blocks = []

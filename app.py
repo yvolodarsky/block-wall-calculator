@@ -75,16 +75,17 @@ def plot_wall(full_blocks, half_blocks, rows, is_tapered):
 
 # Calculation and display
 if st.button('Calculate'):
-    adjusted_height = (height - buried_height) // block_height + 1
+    adjusted_height = math.ceil((height - buried_height) / block_height)  # Corrected height calculation
     height_adjustment_warning(height, block_height)
     full_blocks = math.ceil(length / block_length)  # Corrected calculation to use block length as linear foot
-    half_blocks = 2 if not is_tapered else 0
+    half_blocks = 2 if not is_tapered and adjusted_height > 1 else 0
     rows = int(adjusted_height)
-    total_weight = full_blocks * block_weight
-    total_price = full_blocks * price_per_block
+    total_weight = full_blocks * block_weight * rows
+    total_price = full_blocks * price_per_block * rows
     total_trucks = math.ceil(total_weight / truck_capacity)
 
-    st.write(f'Total Blocks: {full_blocks}')
+    st.write(f'Total Blocks: {full_blocks * rows}')
+    st.write(f'Full Blocks: {full_blocks}')
     st.write(f'Half Blocks: {half_blocks}')
     st.write(f'Total Weight: {total_weight} lbs')
     st.write(f'Total Price: ${total_price:.2f}')

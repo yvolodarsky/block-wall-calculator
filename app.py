@@ -5,7 +5,7 @@ import math
 # Truck capacity
 truck_capacity = 45500
 
-# Updated block sizes and weights
+# Updated block sizes and weights including all block types
 block_sizes = {
     'V-Wedge Blocks': {
         '6x2x2': {'length': 6, 'height': 2, 'weight': 3500},
@@ -20,6 +20,24 @@ block_sizes = {
         '2.5x2.5x2.5': {'length': 2.5, 'height': 2.5, 'weight': 2000},
         '30x30x30': {'length': 2.5, 'height': 2.5, 'weight': 2000},
         '6x2x2': {'length': 6, 'height': 2, 'weight': 3500},
+        '3x2x2': {'length': 3, 'height': 2, 'weight': 1750}
+    },
+    'Knob Blocks': {
+        '4x2x2': {'length': 4, 'height': 2, 'weight': 2500},
+        '2x2x2': {'length': 2, 'height': 2, 'weight': 1200}
+    },
+    'Dome Blocks': {
+        '6x2x2': {'length': 6, 'height': 2, 'weight': 3500},
+        '4x2x2': {'length': 4, 'height': 2, 'weight': 2500}
+    },
+    'Castle (Benton) Blocks': {
+        '6x2x2': {'length': 6, 'height': 2, 'weight': 3500},
+        '3x2x2': {'length': 3, 'height': 2, 'weight': 1750}
+    },
+    'Flat Blocks': {
+        '8x2x2': {'length': 8, 'height': 2, 'weight': 4500},
+        '6x2x2': {'length': 6, 'height': 2, 'weight': 3500},
+        '4x2x2': {'length': 4, 'height': 2, 'weight': 2500},
         '3x2x2': {'length': 3, 'height': 2, 'weight': 1750}
     }
 }
@@ -39,55 +57,19 @@ block_height = block_sizes[block_category][block_type]['height']
 block_weight = block_sizes[block_category][block_type]['weight']
 buried_height = 1
 
-# Height adjustment warning
-def height_adjustment_warning(height, block_height):
-    remainder = height % block_height
-    if remainder != 0:
-        excess = block_height - remainder
-        st.warning(f"The selected wall height does not evenly match the block height. The wall will be slightly taller by {excess} feet, or you may need to bury {excess} feet of the bottom row.")
-
-# Diagram function - Accurate horizontal representation with tapered or flat configuration
-def plot_wall(total_blocks, rows, is_tapered):
-    scale_factor = max(20, length / 10)
-    fig, ax = plt.subplots(figsize=(scale_factor, 8))
-    y = 0
-    block_number = 1
-    for row in range(rows):
-        x = 0
-        blocks_in_row = total_blocks[row]
-        if row % 2 == 1 and not is_tapered:
-            x += block_length / 2
-        for b in range(blocks_in_row):
-            ax.add_patch(plt.Rectangle((x, y), block_length, block_height, edgecolor='black', facecolor='lightgray'))
-            ax.text(x + block_length / 2, y + block_height / 2, str(block_number), ha='center', va='center', fontsize=8, color='black')
-            block_number += 1
-            x += block_length
-        # Add half blocks on both sides if not tapered
-        if not is_tapered and row % 2 == 1:
-            ax.add_patch(plt.Rectangle((0, y), block_length / 2, block_height, edgecolor='black', facecolor='darkgray'))
-            ax.add_patch(plt.Rectangle((x, y), block_length / 2, block_height, edgecolor='black', facecolor='darkgray'))
-        y += block_height
-    plt.xlim(0, length)
-    plt.ylim(0, height)
-    plt.title('Wall Diagram (Lying Down, Numbered Blocks, Tapered or Flat)')
-    plt.gca().set_aspect('auto')
-    st.pyplot(fig)
-
 # Calculation and display
 if st.button('Calculate'):
     adjusted_height = math.ceil((height - buried_height) / block_height) + 1
-    height_adjustment_warning(height, block_height)
-
+    full_blocks = math.ceil(length / block_length)
     rows = int(adjusted_height)
     total_blocks = []
-    blocks_in_row = math.ceil(length / block_length)
 
     for row in range(rows):
         if is_tapered:
-            tapered_blocks = max(1, blocks_in_row - 2 * row)
+            tapered_blocks = max(1, full_blocks - 2 * row)
             total_blocks.append(tapered_blocks)
         else:
-            total_blocks.append(blocks_in_row)
+            total_blocks.append(full_blocks)
 
     total_full_blocks = sum(total_blocks)
     total_weight = total_full_blocks * block_weight
@@ -99,5 +81,3 @@ if st.button('Calculate'):
     st.write(f'Total Weight: {total_weight} lbs')
     st.write(f'Total Price: ${total_price:.2f}')
     st.write(f'Trucks Needed: {total_trucks}')
-
-    plot_wall(total_blocks, rows, is_tapered)

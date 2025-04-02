@@ -71,7 +71,7 @@ def plot_wall(total_blocks, rows, is_tapered):
 
 # Calculation and display
 if st.button('Calculate'):
-    adjusted_height = math.ceil((height - buried_height) / block_height)
+    adjusted_height = math.ceil((height - buried_height) / block_height) + 1  # Ensure at least one block is buried
     height_adjustment_warning(height, block_height)
 
     rows = int(adjusted_height)

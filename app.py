@@ -57,29 +57,6 @@ block_height = block_sizes[block_category][block_type]['height']
 block_weight = block_sizes[block_category][block_type]['weight']
 buried_height = 1
 
-# Diagram function
-def plot_wall(total_blocks, rows, is_tapered):
-    scale_factor = max(20, length / 10)
-    fig, ax = plt.subplots(figsize=(scale_factor, 8))
-    y = 0
-    block_number = 1
-    for row in range(rows):
-        x = 0
-        blocks_in_row = total_blocks[row]
-        if row % 2 == 1 and not is_tapered:
-            x += block_length / 2
-        for b in range(blocks_in_row):
-            ax.add_patch(plt.Rectangle((x, y), block_length, block_height, edgecolor='black', facecolor='lightgray'))
-            ax.text(x + block_length / 2, y + block_height / 2, str(block_number), ha='center', va='center', fontsize=8, color='black')
-            block_number += 1
-            x += block_length
-        y += block_height
-    plt.xlim(0, max(length, block_length * max(total_blocks)))
-    plt.ylim(0, height)
-    plt.title(f'Wall Diagram ({block_category} - {block_type})')
-    plt.gca().set_aspect('auto')
-    st.pyplot(fig)
-
 # Calculation and display
 if st.button('Calculate'):
     adjusted_height = math.ceil((height - buried_height) / block_height) + 1
@@ -103,4 +80,4 @@ if st.button('Calculate'):
     st.write(f'Total Rows: {rows}')
     st.write(f'Total Weight: {total_weight} lbs')
     st.write(f'Total Price: ${total_price:.2f}')
-    st.write(f'Trucks
+    st.write(f'Trucks Needed: {total_trucks}')

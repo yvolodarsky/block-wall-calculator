@@ -39,22 +39,26 @@ block_height = block_sizes[block_category][block_type]['height']
 block_weight = block_sizes[block_category][block_type]['weight']
 buried_height = 1
 
+# Height adjustment warning
+def height_adjustment_warning(height, block_height):
+    remainder = height % block_height
+    if remainder != 0:
+        excess = block_height - remainder
+        st.warning(f"The selected wall height does not evenly match the block height. The wall will be slightly taller by {excess} feet, or you may need to bury {excess} feet of the top block.")
+
 # Diagram function - Improved visual representation of lying down blocks
 def plot_wall(full_blocks, half_blocks, rows, is_tapered):
-    # Adjust figure size based on wall length
     scale_factor = max(10, length / 20)
     fig, ax = plt.subplots(figsize=(scale_factor, 6))
     y = 0
     for row in range(rows):
         x = 0
-        # Staggered pattern for each row, even if tapered
         if row % 2 == 1:
             x += block_length / 2
         blocks_in_row = full_blocks if not is_tapered else max(1, full_blocks - row)
         for b in range(blocks_in_row):
             ax.add_patch(plt.Rectangle((x, y), block_length, block_height, edgecolor='black', facecolor='lightgray'))
             x += block_length
-        # Add half blocks at the ends if necessary
         if half_blocks and row % 2 == 1:
             ax.add_patch(plt.Rectangle((x, y), block_length / 2, block_height, edgecolor='black', facecolor='darkgray'))
         y += block_height
@@ -67,6 +71,7 @@ def plot_wall(full_blocks, half_blocks, rows, is_tapered):
 # Calculation and display
 if st.button('Calculate'):
     adjusted_height = (height - buried_height) // block_height + 1
+    height_adjustment_warning(height, block_height)
     full_blocks = math.ceil(length / block_length)
     half_blocks = 2 if not is_tapered else 0
     rows = int(adjusted_height)

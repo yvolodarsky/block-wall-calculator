@@ -1,4 +1,5 @@
 import streamlit as st
+import matplotlib.pyplot as plt
 import math
 
 # Updated block sizes and weights
@@ -38,7 +39,7 @@ block_sizes = {
     }
 }
 
-truck_capacity = 45500  # Max weight per truck in lbs
+truck_capacity = 45500
 
 st.title('Concrete Block Wall Calculator')
 
@@ -55,31 +56,36 @@ block_height = block_sizes[block_category][block_type]['height']
 block_weight = block_sizes[block_category][block_type]['weight']
 buried_height = 1
 
-# Calculate number of blocks
-def calculate_blocks():
-    adjusted_height = (height - buried_height) // block_height + 1
-    total_full_blocks = 0
-    total_half_blocks = 0
+# Diagram function
+def plot_wall(full_blocks, half_blocks, rows):
+    fig, ax = plt.subplots(figsize=(12, 6))
+    y = 0
+    for row in range(rows):
+        x = 0
+        for b in range(full_blocks):
+            ax.add_patch(plt.Rectangle((x, y), block_length, block_height, edgecolor='black', facecolor='lightgray'))
+            x += block_length
+        y += block_height
+    plt.xlim(0, length)
+    plt.ylim(0, height)
+    plt.title('Wall Diagram')
+    st.pyplot(fig)
 
-    for row in range(int(adjusted_height)):
-        blocks_in_row = -(-length // block_length)  # Ceiling division
-        if is_tapered:
-            blocks_in_row = max(1, blocks_in_row - row * 2)
-        if not is_tapered and row % 2 == 1:  # Staggered non-tapered rows
-            total_half_blocks += 2
-        total_full_blocks += blocks_in_row
-
-    total_blocks = total_full_blocks + total_half_blocks
-    total_weight = (total_full_blocks * block_weight) + (total_half_blocks * (block_weight / 2))
-    total_price = (total_full_blocks * price_per_block) + (total_half_blocks * (price_per_block / 2))
-    total_trucks = math.ceil(total_weight / truck_capacity)
-    return total_blocks, total_full_blocks, total_half_blocks, total_weight, total_price, total_trucks
-
+# Calculation and display
 if st.button('Calculate'):
-    total_blocks, full_blocks, half_blocks, total_weight, total_price, total_trucks = calculate_blocks()
-    st.write(f'Total Blocks: {total_blocks}')
+    adjusted_height = (height - buried_height) // block_height + 1
+    full_blocks = math.ceil(length / block_length)
+    rows = int(adjusted_height)
+    half_blocks = 2 if not is_tapered and rows > 1 else 0
+    total_weight = (full_blocks * block_weight) + (half_blocks * (block_weight / 2))
+    total_price = (full_blocks * price_per_block) + (half_blocks * (price_per_block / 2))
+    total_trucks = math.ceil(total_weight / truck_capacity)
+
+    st.write(f'Total Blocks: {full_blocks + half_blocks}')
     st.write(f'Full Blocks: {full_blocks}')
     st.write(f'Half Blocks: {half_blocks}')
     st.write(f'Total Weight: {total_weight} lbs')
     st.write(f'Total Price: ${total_price:.2f}')
     st.write(f'Trucks Needed: {total_trucks}')
+
+    plot_wall(full_blocks, half_blocks, rows)

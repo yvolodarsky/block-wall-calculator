@@ -82,4 +82,32 @@ def plot_wall(total_blocks, rows, is_tapered):
     plt.xlim(0, max(length, block_length * max(total_blocks)))
     plt.ylim(0, block_height * rows)
     plt.title(f'Wall Diagram ({block_category} - {block_type})')
-    plt.gca
+    plt.gca().set_aspect('auto')
+    st.pyplot(fig)
+
+# Calculation and display
+if st.button('Calculate'):
+    adjusted_height = math.ceil(height / block_height)
+    full_blocks = math.ceil(length / block_length)
+    rows = int(adjusted_height)
+    total_blocks = []
+
+    for row in range(rows):
+        if is_tapered:
+            tapered_blocks = max(1, full_blocks - 2 * row)
+            total_blocks.append(tapered_blocks)
+        else:
+            total_blocks.append(full_blocks)
+
+    total_full_blocks = sum(total_blocks)
+    total_weight = total_full_blocks * block_weight
+    total_price = total_full_blocks * price_per_block
+    total_trucks = math.ceil(total_weight / truck_capacity)
+
+    st.write(f'Total Blocks: {total_full_blocks}')
+    st.write(f'Total Rows: {rows}')
+    st.write(f'Total Weight: {total_weight} lbs')
+    st.write(f'Total Price: ${total_price:.2f}')
+    st.write(f'Trucks Needed: {total_trucks}')
+
+    plot_wall(total_blocks, rows, is_tapered)

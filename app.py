@@ -60,7 +60,7 @@ buried_height = 1
 # Diagram function
 def plot_wall(total_blocks, rows, is_tapered):
     scale_factor = max(20, length / 10)
-    fig, ax = plt.subplots(figsize=(scale_factor, 8))
+    fig, ax = plt.subplots(figsize=(scale_factor, 6))
     y = 0
     block_number = 1
     for row in range(rows):

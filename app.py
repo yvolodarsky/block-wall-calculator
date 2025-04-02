@@ -39,9 +39,11 @@ block_height = block_sizes[block_category][block_type]['height']
 block_weight = block_sizes[block_category][block_type]['weight']
 buried_height = 1
 
-# Diagram function - Proper horizontal orientation, staggered, and tapered
+# Diagram function - Improved visual representation of lying down blocks
 def plot_wall(full_blocks, half_blocks, rows, is_tapered):
-    fig, ax = plt.subplots(figsize=(16, 8))
+    # Adjust figure size based on wall length
+    scale_factor = max(10, length / 20)
+    fig, ax = plt.subplots(figsize=(scale_factor, 6))
     y = 0
     for row in range(rows):
         x = 0
@@ -58,7 +60,7 @@ def plot_wall(full_blocks, half_blocks, rows, is_tapered):
         y += block_height
     plt.xlim(0, length)
     plt.ylim(0, height)
-    plt.title('Wall Diagram (Proper Orientation, Staggered and Tapered)')
+    plt.title('Wall Diagram (Lying Down, Scaled)')
     plt.gca().set_aspect('auto')
     st.pyplot(fig)
 

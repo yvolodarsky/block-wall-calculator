@@ -39,23 +39,23 @@ block_height = block_sizes[block_category][block_type]['height']
 block_weight = block_sizes[block_category][block_type]['weight']
 buried_height = 1
 
-# Diagram function - Horizontal Orientation, Staggered or Tapered
+# Diagram function - Horizontal, Staggered, and Tapered
 def plot_wall(full_blocks, half_blocks, rows, is_tapered):
     fig, ax = plt.subplots(figsize=(12, 6))
     y = 0
     for row in range(rows):
         x = 0
-        if row % 2 == 1 and not is_tapered:  # Staggered row
-            x += block_length / 2  # Start with half block shift
-        for b in range(full_blocks):
+        # Stagger every other row if not tapered
+        if row % 2 == 1 and not is_tapered:
+            x += block_length / 2
+        blocks_in_row = full_blocks if not is_tapered else max(1, full_blocks - row)
+        for b in range(blocks_in_row):
             ax.add_patch(plt.Rectangle((x, y), block_length, block_height, edgecolor='black', facecolor='lightgray'))
             x += block_length
-        if row % 2 == 1 and not is_tapered:  # End with half block on staggered rows
-            ax.add_patch(plt.Rectangle((x, y), block_length / 2, block_height, edgecolor='black', facecolor='darkgray'))
         y += block_height
     plt.xlim(0, length)
     plt.ylim(0, height)
-    plt.title('Wall Diagram (Lying Down, Staggered/Tapered)')
+    plt.title('Wall Diagram (Horizontal, Staggered/Tapered)')
     st.pyplot(fig)
 
 # Calculation and display

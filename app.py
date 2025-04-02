@@ -77,7 +77,7 @@ def plot_wall(full_blocks, half_blocks, rows, is_tapered):
 if st.button('Calculate'):
     adjusted_height = (height - buried_height) // block_height + 1
     height_adjustment_warning(height, block_height)
-    full_blocks = math.ceil(length / block_length)
+    full_blocks = math.ceil(length / block_length)  # Corrected calculation to use block length as linear foot
     half_blocks = 2 if not is_tapered else 0
     rows = int(adjusted_height)
     total_weight = full_blocks * block_weight

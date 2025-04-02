@@ -46,32 +46,36 @@ def height_adjustment_warning(height, block_height):
         excess = block_height - remainder
         st.warning(f"The selected wall height does not evenly match the block height. The wall will be slightly taller by {excess} feet, or you may need to bury {excess} feet of the bottom row.")
 
-# Diagram function - Improved visual representation of lying down blocks with numbering
+# Diagram function - Accurate horizontal representation with tapered or flat configuration
 def plot_wall(total_blocks, rows, is_tapered):
-    scale_factor = max(10, length / 20)
-    fig, ax = plt.subplots(figsize=(scale_factor, 6))
+    scale_factor = max(20, length / 10)
+    fig, ax = plt.subplots(figsize=(scale_factor, 8))
     y = 0
     block_number = 1
     for row in range(rows):
         x = 0
         blocks_in_row = total_blocks[row]
-        if row % 2 == 1:
+        if row % 2 == 1 and not is_tapered:
             x += block_length / 2
         for b in range(blocks_in_row):
             ax.add_patch(plt.Rectangle((x, y), block_length, block_height, edgecolor='black', facecolor='lightgray'))
             ax.text(x + block_length / 2, y + block_height / 2, str(block_number), ha='center', va='center', fontsize=8, color='black')
             block_number += 1
             x += block_length
+        # Add half blocks on both sides if not tapered
+        if not is_tapered and row % 2 == 1:
+            ax.add_patch(plt.Rectangle((0, y), block_length / 2, block_height, edgecolor='black', facecolor='darkgray'))
+            ax.add_patch(plt.Rectangle((x, y), block_length / 2, block_height, edgecolor='black', facecolor='darkgray'))
         y += block_height
     plt.xlim(0, length)
     plt.ylim(0, height)
-    plt.title('Wall Diagram (Lying Down, Numbered Blocks)')
+    plt.title('Wall Diagram (Lying Down, Numbered Blocks, Tapered or Flat)')
     plt.gca().set_aspect('auto')
     st.pyplot(fig)
 
 # Calculation and display
 if st.button('Calculate'):
-    adjusted_height = math.ceil((height - buried_height) / block_height) + 1  # Ensure at least one block is buried
+    adjusted_height = math.ceil((height - buried_height) / block_height) + 1
     height_adjustment_warning(height, block_height)
 
     rows = int(adjusted_height)
@@ -80,7 +84,7 @@ if st.button('Calculate'):
 
     for row in range(rows):
         if is_tapered:
-            tapered_blocks = max(1, blocks_in_row - row * 2)
+            tapered_blocks = max(1, blocks_in_row - 2 * row)
             total_blocks.append(tapered_blocks)
         else:
             total_blocks.append(blocks_in_row)

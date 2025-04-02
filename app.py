@@ -1,4 +1,5 @@
 import streamlit as st
+import math
 
 # Updated block sizes and weights
 block_sizes = {
@@ -37,6 +38,8 @@ block_sizes = {
     }
 }
 
+truck_capacity = 45500  # Max weight per truck in lbs
+
 st.title('Concrete Block Wall Calculator')
 
 # Input fields
@@ -69,12 +72,14 @@ def calculate_blocks():
     total_blocks = total_full_blocks + total_half_blocks
     total_weight = (total_full_blocks * block_weight) + (total_half_blocks * (block_weight / 2))
     total_price = (total_full_blocks * price_per_block) + (total_half_blocks * (price_per_block / 2))
-    return total_blocks, total_full_blocks, total_half_blocks, total_weight, total_price
+    total_trucks = math.ceil(total_weight / truck_capacity)
+    return total_blocks, total_full_blocks, total_half_blocks, total_weight, total_price, total_trucks
 
 if st.button('Calculate'):
-    total_blocks, full_blocks, half_blocks, total_weight, total_price = calculate_blocks()
+    total_blocks, full_blocks, half_blocks, total_weight, total_price, total_trucks = calculate_blocks()
     st.write(f'Total Blocks: {total_blocks}')
     st.write(f'Full Blocks: {full_blocks}')
     st.write(f'Half Blocks: {half_blocks}')
     st.write(f'Total Weight: {total_weight} lbs')
     st.write(f'Total Price: ${total_price:.2f}')
+    st.write(f'Trucks Needed: {total_trucks}')

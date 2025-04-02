@@ -39,7 +39,7 @@ block_height = block_sizes[block_category][block_type]['height']
 block_weight = block_sizes[block_category][block_type]['weight']
 buried_height = 1
 
-# Diagram function
+# Diagram function - Horizontal Orientation
 def plot_wall(full_blocks, rows):
     fig, ax = plt.subplots(figsize=(12, 6))
     y = 0
@@ -51,7 +51,7 @@ def plot_wall(full_blocks, rows):
         y += block_height
     plt.xlim(0, length)
     plt.ylim(0, height)
-    plt.title('Wall Diagram')
+    plt.title('Wall Diagram (Horizontal Orientation)')
     st.pyplot(fig)
 
 # Calculation and display

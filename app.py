@@ -57,7 +57,7 @@ block_height = block_sizes[block_category][block_type]['height']
 block_weight = block_sizes[block_category][block_type]['weight']
 buried_height = 1
 
-# Diagram function - Corrected tapered wall display
+# Diagram function - Corrected tapered wall display for both sides
 def plot_wall(total_blocks, rows, is_tapered):
     scale_factor = max(20, length / 10)
     fig, ax = plt.subplots(figsize=(scale_factor, 6))
@@ -73,36 +73,13 @@ def plot_wall(total_blocks, rows, is_tapered):
             ax.text(x + block_length / 2, y + block_height / 2, str(block_number), ha='center', va='center', fontsize=8, color='black')
             block_number += 1
             x += block_length
+        # Correct the right side missing block issue
+        if is_tapered and (blocks_in_row < total_blocks[0]):
+            ax.add_patch(plt.Rectangle((x, y), block_length, block_height, edgecolor='black', facecolor='lightgray'))
+            ax.text(x + block_length / 2, y + block_height / 2, str(block_number), ha='center', va='center', fontsize=8, color='black')
+            block_number += 1
         y += block_height
     plt.xlim(0, max(length, block_length * max(total_blocks)))
     plt.ylim(0, block_height * rows)
     plt.title(f'Wall Diagram ({block_category} - {block_type})')
-    plt.gca().set_aspect('auto')
-    st.pyplot(fig)
-
-# Calculation and display
-if st.button('Calculate'):
-    adjusted_height = math.ceil(height / block_height)
-    full_blocks = math.ceil(length / block_length)
-    rows = int(adjusted_height)
-    total_blocks = []
-
-    for row in range(rows):
-        if is_tapered:
-            tapered_blocks = max(1, full_blocks - 2 * row)
-            total_blocks.append(tapered_blocks)
-        else:
-            total_blocks.append(full_blocks)
-
-    total_full_blocks = sum(total_blocks)
-    total_weight = total_full_blocks * block_weight
-    total_price = total_full_blocks * price_per_block
-    total_trucks = math.ceil(total_weight / truck_capacity)
-
-    st.write(f'Total Blocks: {total_full_blocks}')
-    st.write(f'Total Rows: {rows}')
-    st.write(f'Total Weight: {total_weight} lbs')
-    st.write(f'Total Price: ${total_price:.2f}')
-    st.write(f'Trucks Needed: {total_trucks}')
-
-    plot_wall(total_blocks, rows, is_tapered)
+    plt.gca

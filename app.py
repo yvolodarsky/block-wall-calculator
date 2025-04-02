@@ -57,7 +57,7 @@ block_height = block_sizes[block_category][block_type]['height']
 block_weight = block_sizes[block_category][block_type]['weight']
 buried_height = 1
 
-# Diagram function
+# Diagram function - Improved with staggered and tapered rows, half blocks shown
 def plot_wall(total_blocks, rows, is_tapered):
     scale_factor = max(20, length / 10)
     fig, ax = plt.subplots(figsize=(scale_factor, 6))
@@ -66,13 +66,17 @@ def plot_wall(total_blocks, rows, is_tapered):
     for row in range(rows):
         x = 0
         blocks_in_row = total_blocks[row]
-        if row % 2 == 1 and not is_tapered:
+        if row % 2 == 1:
             x += block_length / 2
         for b in range(blocks_in_row):
             ax.add_patch(plt.Rectangle((x, y), block_length, block_height, edgecolor='black', facecolor='lightgray'))
             ax.text(x + block_length / 2, y + block_height / 2, str(block_number), ha='center', va='center', fontsize=8, color='black')
             block_number += 1
             x += block_length
+        # Add half blocks when necessary
+        if not is_tapered and row % 2 == 1:
+            ax.add_patch(plt.Rectangle((0, y), block_length / 2, block_height, edgecolor='black', facecolor='darkgray'))
+            ax.add_patch(plt.Rectangle((x, y), block_length / 2, block_height, edgecolor='black', facecolor='darkgray'))
         y += block_height
     plt.xlim(0, max(length, block_length * max(total_blocks)))
     plt.ylim(0, block_height * rows)

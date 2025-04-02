@@ -2,6 +2,9 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import math
 
+# Truck capacity
+truck_capacity = 45500
+
 # Updated block sizes and weights
 block_sizes = {
     'V-Wedge Blocks': {
@@ -18,28 +21,8 @@ block_sizes = {
         '30x30x30': {'length': 2.5, 'height': 2.5, 'weight': 2000},
         '6x2x2': {'length': 6, 'height': 2, 'weight': 3500},
         '3x2x2': {'length': 3, 'height': 2, 'weight': 1750}
-    },
-    'Knob Blocks': {
-        '4x2x2': {'length': 4, 'height': 2, 'weight': 2500},
-        '2x2x2': {'length': 2, 'height': 2, 'weight': 1200}
-    },
-    'Dome Blocks': {
-        '6x2x2': {'length': 6, 'height': 2, 'weight': 3500},
-        '4x2x2': {'length': 4, 'height': 2, 'weight': 2500}
-    },
-    'Castle (Benton) Blocks': {
-        '6x2x2': {'length': 6, 'height': 2, 'weight': 3500},
-        '3x2x2': {'length': 3, 'height': 2, 'weight': 1750}
-    },
-    'Flat Blocks': {
-        '8x2x2': {'length': 8, 'height': 2, 'weight': 4500},
-        '6x2x2': {'length': 6, 'height': 2, 'weight': 3500},
-        '4x2x2': {'length': 4, 'height': 2, 'weight': 2500},
-        '3x2x2': {'length': 3, 'height': 2, 'weight': 1750}
     }
 }
-
-truck_capacity = 45500
 
 st.title('Concrete Block Wall Calculator')
 
@@ -57,7 +40,7 @@ block_weight = block_sizes[block_category][block_type]['weight']
 buried_height = 1
 
 # Diagram function
-def plot_wall(full_blocks, half_blocks, rows):
+def plot_wall(full_blocks, rows):
     fig, ax = plt.subplots(figsize=(12, 6))
     y = 0
     for row in range(rows):
@@ -76,16 +59,13 @@ if st.button('Calculate'):
     adjusted_height = (height - buried_height) // block_height + 1
     full_blocks = math.ceil(length / block_length)
     rows = int(adjusted_height)
-    half_blocks = 2 if not is_tapered and rows > 1 else 0
-    total_weight = (full_blocks * block_weight) + (half_blocks * (block_weight / 2))
-    total_price = (full_blocks * price_per_block) + (half_blocks * (price_per_block / 2))
+    total_weight = full_blocks * block_weight
+    total_price = full_blocks * price_per_block
     total_trucks = math.ceil(total_weight / truck_capacity)
 
-    st.write(f'Total Blocks: {full_blocks + half_blocks}')
-    st.write(f'Full Blocks: {full_blocks}')
-    st.write(f'Half Blocks: {half_blocks}')
+    st.write(f'Total Blocks: {full_blocks}')
     st.write(f'Total Weight: {total_weight} lbs')
     st.write(f'Total Price: ${total_price:.2f}')
     st.write(f'Trucks Needed: {total_trucks}')
 
-    plot_wall(full_blocks, half_blocks, rows)
+    plot_wall(full_blocks, rows)

@@ -9,7 +9,7 @@ truck_capacity = 45500
 block_sizes = {
     'V-Wedge Blocks': {
         '6x2x2': {'length': 6, 'height': 2, 'weight': 3500},
-        '5x2x2': {'length': 5, 'height': 2, 'weight': 3000},
+        '5x2.5x2.5': {'length': 5, 'height': 2.5, 'weight': 3000},
         '4x2x2': {'length': 4, 'height': 2, 'weight': 2500},
         '3x2x2': {'length': 3, 'height': 2, 'weight': 1750},
         '2x2x2': {'length': 2, 'height': 2, 'weight': 1200}
